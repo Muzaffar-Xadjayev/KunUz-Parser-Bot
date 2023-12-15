@@ -18,3 +18,9 @@ async def add_user(user_id, full_name, username, join_date):
               f"Bazada {len(count)} ta foydalanuvchi bor"
         for admin in ADMINS:
             await bot.send_message(admin, msg)
+
+
+async def get_all_users():
+    us = User.select()
+    user = [model_to_dict(item) for item in us]
+    return user
