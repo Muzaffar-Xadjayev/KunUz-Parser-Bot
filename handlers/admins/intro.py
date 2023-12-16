@@ -12,7 +12,8 @@ async def intro_admin(message: types.Message):
 async def get_users(call: types.CallbackQuery):
     await call.answer()
     user = await get_all_users()
-    await call.message.edit_text(f"There're {len(user)} users in DataBase")
+    btn = await admin_command()
+    await call.message.edit_text(f"There're {len(user)} users in DataBase", reply_markup=btn)
 
 
 def register_admin_handlers(dp: Dispatcher):
