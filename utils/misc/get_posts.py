@@ -37,9 +37,4 @@ def posts(link):
                     "news_link": news_link,
                 }
             )
-    return data
-
-
-print(posts(url))
-
-
+    return data[:3]

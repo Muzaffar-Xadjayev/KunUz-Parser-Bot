@@ -1,5 +1,6 @@
 from aiogram import types
 from aiogram import Dispatcher
+from filters.check_admin import IsAdmin
 from keyboards.inline.admin_command import admin_command
 from database.connections import *
 
@@ -17,5 +18,5 @@ async def get_users(call: types.CallbackQuery):
 
 
 def register_admin_handlers(dp: Dispatcher):
-    dp.register_message_handler(intro_admin, commands=["admin"])
-    dp.register_callback_query_handler(get_users, text="admin:get_users")
+    dp.register_message_handler(intro_admin, IsAdmin(), commands=["admin"])
+    dp.register_callback_query_handler(get_users, IsAdmin(), text="admin:get_users")
