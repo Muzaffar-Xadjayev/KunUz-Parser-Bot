@@ -2,9 +2,12 @@ import asyncio
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.utils.exceptions import BotBlocked
+
+from handlers.users.help import help_user
+from handlers.users.start import bot_start
 from states.Admin import AdminAds
 import builtins
-from keyboards.inline.admin_command import cancel_btn
+from keyboards.inline.admin_command import cancel_btn, admin_command
 from database.connections import *
 from loader import bot
 
@@ -14,6 +17,24 @@ async def send_ads(call: types.CallbackQuery):
     btn = await cancel_btn()
     await call.message.edit_text("Send Message", reply_markup=btn)
     await AdminAds.text.set()
+
+
+async def cancel_function(call: types.CallbackQuery, state: FSMContext):
+    await state.finish()
+    await call.message.delete()
+    await call.message.answer("Send Ads have been canceled")
+    btn = await admin_command()
+    await call.message.answer(f"Xush kelibsiz {call.from_user.first_name} – ADMIN", reply_markup=btn)
+
+
+async def cancel_command_function(message: types.Message, state: FSMContext):
+    await state.finish()
+    if message.text == "/start":
+        await message.answer("Cancel")
+        await bot_start(message)
+    elif message.text == "/help":
+        await message.answer("Cancel")
+        await help_user(message)
 
 
 async def send_msg(msg: types.Message, state: FSMContext):
@@ -63,5 +84,7 @@ async def send_msg(msg: types.Message, state: FSMContext):
 
 def register_send_ads_handler(dp: Dispatcher):
     dp.register_callback_query_handler(send_ads, text="admin:send_ads")
+    dp.register_message_handler(cancel_command_function, state=AdminAds.text, commands=["start", "help"])
     dp.register_message_handler(send_msg, state=AdminAds.text,
                                 content_types=["text", "video", "audio", "photo", "location"])
+    dp.register_callback_query_handler(cancel_function, state=AdminAds.text)
